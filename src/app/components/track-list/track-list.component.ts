@@ -61,10 +61,12 @@ export class TrackListComponent {
   @Input() tracks: SpotifyTrack[] = [];
   @Output() trackSelected = new EventEmitter<SpotifyTrack>();
 
+  // Emitir evento cuando se selecciona una cancion
   onTrackSelect(track: SpotifyTrack): void {
     this.trackSelected.emit(track);
   }
 
+  // Obtener imagen de la cancion o placeholder
   getTrackImage(track: SpotifyTrack): string {
     if (!track.album.images || track.album.images.length === 0) {
       return 'https://via.placeholder.com/48x48/1e3d59/ffffff?text=No+Image';
@@ -72,6 +74,7 @@ export class TrackListComponent {
     return track.album.images[2]?.url || track.album.images[0]?.url || 'https://via.placeholder.com/48x48/1e3d59/ffffff?text=No+Image';
   }
 
+  // Formatear lista de artistas
   getArtists(track: SpotifyTrack): string {
     return track.artists.map(artist => artist.name).join(', ');
   }
