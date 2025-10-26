@@ -45,11 +45,13 @@ export class AppComponent {
 
   constructor(private spotifyService: SpotifyService) {}
 
+  // Buscar canciones en Spotify
   onSearch(query: string): void {
     this.errorMessage = '';
     this.spotifyService.searchTracks(query).subscribe({
       next: (response) => {
         this.tracks = response.tracks.items;
+        // Seleccionar primera cancion si no hay ninguna seleccionada
         if (this.tracks.length > 0 && !this.selectedTrack) {
           this.selectedTrack = this.tracks[0];
         }
@@ -62,6 +64,7 @@ export class AppComponent {
     });
   }
 
+  // Cambiar cancion seleccionada
   onTrackSelected(track: SpotifyTrack): void {
     this.selectedTrack = track;
   }
