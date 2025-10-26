@@ -1,5 +1,7 @@
 # Reproductor Angular - Spotify Integration
 
+## Autor
+
 Luis Nafate 4-B
 TIID
 
@@ -37,12 +39,13 @@ Un reproductor de música construido con Angular 18+ y Tailwind CSS, conectado a
    d. Reemplaza `'TU_TOKEN_DE_SPOTIFY_AQUI'` con tu token:
 
    ```typescript
-   private readonly accessToken = 'TU_TOKEN_AQUI';
+   private readonly clientId = 'TU_TOKEN_AQUI';
+   private readonly clientSecret = 'TU_TOKEN_AQUI';
    ```
 
-   **Nota:** Los tokens de Spotify expiran después de 1 hora. Para producción, deberías implementar OAuth 2.0.
+   **Nota:** Los tokens de Spotify expiran después de 1 hora. por lo que en esta practica debería implementar OAuth 2.0 pero es opcional hacerlo en este practica.
 
-## 🏃‍♂️ Ejecutar la aplicación
+## Ejecutar la aplicación
 
 ```bash
 npm start
@@ -50,7 +53,7 @@ npm start
 
 La aplicación estará disponible en `http://localhost:4200`
 
-## 🎯 Uso
+## Uso
 
 1. Escribe el nombre de una canción o artista en la barra de búsqueda
 2. Presiona Enter para buscar
@@ -58,7 +61,7 @@ La aplicación estará disponible en `http://localhost:4200`
 4. Haz clic en cualquier canción para mostrarla en el reproductor central
 5. Los controles de reproducción son solo visuales (no reproducen música real)
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 src/
@@ -78,14 +81,14 @@ src/
 └── main.ts
 ```
 
-## 🎨 Paleta de colores
+## Paleta de colores
 
 - **Azul oscuro:** `#0b2545`
 - **Azul medio:** `#1e3d59`
 - **Azul claro:** `#2e5266`
 - **Texto:** Blanco con opacidades variables
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - Angular 18.2
 - Tailwind CSS 3.4
@@ -93,26 +96,10 @@ src/
 - Spotify Web API
 - TypeScript 5.5
 
-## ⚠️ Limitaciones
+## Notas de desarrollo
 
-- Los botones de reproducción son solo visuales
-- No hay reproducción de audio real
-- El token de Spotify debe renovarse manualmente cada hora
-- No incluye autenticación de usuario con Spotify
-
-## 📝 Notas de desarrollo
-
-Este proyecto fue creado como una práctica de integración con APIs externas y diseño de interfaces modernas. No está pensado para producción sin implementar:
+Este proyecto fue creado como una práctica de integración con APIs externas y diseño de interfaces. No está pensado para producción sin implementar:
 
 - Sistema de autenticación OAuth 2.0 con Spotify
 - Reproducción de audio real
 - Manejo de estado global (NgRx o similar)
-- Tests unitarios y e2e
-
-## 📄 Licencia
-
-MIT
-
-## 👨‍💻 Autor
-
-Desarrollado como proyecto de práctica con Angular y Spotify API.
