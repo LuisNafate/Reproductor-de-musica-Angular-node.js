@@ -5,6 +5,8 @@
 Luis Nafate 4-B
 TIID
 
+## Descripción
+
 Un reproductor de música construido con Angular 18+ y Tailwind CSS, conectado a la API de Spotify.
 
 ## Características
