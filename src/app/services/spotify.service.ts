@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap, map } from 'rxjs/operators';
 
-// Track interface from Spotify API
+// Interfaz de cancion de Spotify
 export interface SpotifyTrack {
   id: string;
   name: string;
@@ -15,14 +15,14 @@ export interface SpotifyTrack {
   preview_url: string | null;
 }
 
-// Search response structure
+// Estructura de respuesta de busqueda
 export interface SpotifySearchResponse {
   tracks: {
     items: SpotifyTrack[];
   };
 }
 
-// OAuth token response
+// Respuesta del token OAuth
 interface SpotifyTokenResponse {
   access_token: string;
   token_type: string;
@@ -36,24 +36,24 @@ export class SpotifyService {
   private readonly apiUrl = 'https://api.spotify.com/v1';
   private readonly tokenUrl = 'https://accounts.spotify.com/api/token';
   
-  // Client credentials for OAuth 2.0
+  // Credenciales del cliente para OAuth 2.0
   private readonly clientId = '3fa5ab45fb6b48fa9e717375780ebdf5';
   private readonly clientSecret = '1f136f6871d14e8ba8f9715b22344ec6';
   
-  // Token cache
+  // Cache del token
   private accessToken: string | null = null;
   private tokenExpiry: number = 0;
 
   constructor(private http: HttpClient) { }
 
-  // Get or refresh access token
+  // Obtener o renovar el token de acceso
   private getAccessToken(): Observable<string> {
-    // Return cached token if still valid
+    // Retornar token en cache si aun es valido
     if (this.accessToken && Date.now() < this.tokenExpiry) {
       return of(this.accessToken);
     }
 
-    // Request new token using Client Credentials flow
+    // Solicitar nuevo token usando Client Credentials
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`)
@@ -64,7 +64,7 @@ export class SpotifyService {
     return this.http.post<SpotifyTokenResponse>(this.tokenUrl, body, { headers }).pipe(
       map(response => {
         this.accessToken = response.access_token;
-        // Set expiry 5 minutes before actual expiration
+        // Establecer expiracion 5 minutos antes de la expiracion real
         this.tokenExpiry = Date.now() + ((response.expires_in - 300) * 1000);
         return this.accessToken;
       }),
@@ -75,7 +75,7 @@ export class SpotifyService {
     );
   }
 
-  // Search tracks by query string
+  // Buscar canciones por texto
   searchTracks(query: string): Observable<SpotifySearchResponse> {
     return this.getAccessToken().pipe(
       switchMap(token => {
