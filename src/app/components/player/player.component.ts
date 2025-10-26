@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpotifyTrack } from '../../services/spotify.service';
 
@@ -13,9 +13,19 @@ import { SpotifyTrack } from '../../services/spotify.service';
           <img 
             [src]="getAlbumImage()" 
             [alt]="currentTrack?.name || 'No track selected'"
-            class="w-80 h-80 rounded-2xl shadow-2xl border-4 border-white/10"
+            class="w-80 h-80 rounded-2xl shadow-2xl border-4 border-white/10 transition-all duration-300"
+            [class.animate-spin-slow]="isPlaying"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-dark-blue/50 to-transparent rounded-2xl"></div>
+          
+          <!-- Ecualizador animado -->
+          <div *ngIf="isPlaying" class="absolute bottom-4 right-4 flex items-end gap-1 h-8">
+            <div class="w-1 bg-white rounded-full animate-equalizer" style="animation-delay: 0s"></div>
+            <div class="w-1 bg-white rounded-full animate-equalizer" style="animation-delay: 0.2s"></div>
+            <div class="w-1 bg-white rounded-full animate-equalizer" style="animation-delay: 0.4s"></div>
+            <div class="w-1 bg-white rounded-full animate-equalizer" style="animation-delay: 0.1s"></div>
+            <div class="w-1 bg-white rounded-full animate-equalizer" style="animation-delay: 0.3s"></div>
+          </div>
         </div>
       </div>
 
@@ -47,13 +57,13 @@ import { SpotifyTrack } from '../../services/spotify.service';
       </div>
 
       <div class="flex items-center gap-6 mb-4">
-        <button class="text-white/70 hover:text-white transition-colors">
+        <button class="text-white/70 hover:text-white transition-colors hover:scale-110 transform">
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 17H7V14L3 18L7 22V19H17V22L21 18L17 14V17Z"/>
           </svg>
         </button>
 
-        <button class="text-white/70 hover:text-white transition-colors">
+        <button class="text-white/70 hover:text-white transition-colors hover:scale-110 transform">
           <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
           </svg>
@@ -61,8 +71,7 @@ import { SpotifyTrack } from '../../services/spotify.service';
 
         <button 
           (click)="togglePlay()"
-          class="bg-white text-dark-blue rounded-full p-4 hover:scale-110 transition-transform shadow-lg"
-          [disabled]="!hasPreview()">
+          class="bg-white text-dark-blue rounded-full p-4 hover:scale-110 transition-transform shadow-lg">
           <svg *ngIf="!isPlaying" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
           </svg>
@@ -71,13 +80,13 @@ import { SpotifyTrack } from '../../services/spotify.service';
           </svg>
         </button>
 
-        <button class="text-white/70 hover:text-white transition-colors">
+        <button class="text-white/70 hover:text-white transition-colors hover:scale-110 transform">
           <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
           </svg>
         </button>
 
-        <button class="text-white/70 hover:text-white transition-colors">
+        <button class="text-white/70 hover:text-white transition-colors hover:scale-110 transform">
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
           </svg>
@@ -93,12 +102,33 @@ import { SpotifyTrack } from '../../services/spotify.service';
         </div>
       </div>
 
-      <audio #audioPlayer (timeupdate)="onTimeUpdate()" (ended)="onTrackEnded()" (loadedmetadata)="onMetadataLoaded()"></audio>
+      <!-- Nota de Demo -->
+      <div class="mt-6 text-center text-white/40 text-sm">
+        <p>🎵 Modo Demo - Interfaz Visual</p>
+      </div>
     </div>
   `,
-  styles: []
+  styles: [`
+    @keyframes equalizer {
+      0%, 100% { height: 20%; }
+      50% { height: 100%; }
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .animate-equalizer {
+      animation: equalizer 0.8s ease-in-out infinite;
+    }
+
+    .animate-spin-slow {
+      animation: spin-slow 8s linear infinite;
+    }
+  `]
 })
-export class PlayerComponent implements OnChanges, OnDestroy {
+export class PlayerComponent {
   @Input() currentTrack: SpotifyTrack | null = null;
   
   currentTime: string = '0:00';
@@ -106,83 +136,49 @@ export class PlayerComponent implements OnChanges, OnDestroy {
   progress: number = 0;
   isPlaying: boolean = false;
   
-  private audio: HTMLAudioElement | null = null;
-  private updateInterval: any;
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['currentTrack'] && this.currentTrack) {
-      this.loadTrack();
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio = null;
-    }
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-    }
-  }
-
-  loadTrack(): void {
-    if (this.audio) {
-      this.audio.pause();
-    }
-
-    this.isPlaying = false;
-    this.progress = 0;
-    this.currentTime = '0:00';
-
-    if (this.currentTrack?.preview_url) {
-      this.audio = new Audio(this.currentTrack.preview_url);
-      this.audio.addEventListener('loadedmetadata', () => this.onMetadataLoaded());
-      this.audio.addEventListener('timeupdate', () => this.onTimeUpdate());
-      this.audio.addEventListener('ended', () => this.onTrackEnded());
-    }
-  }
+  private progressInterval: any;
 
   togglePlay(): void {
-    if (!this.audio || !this.hasPreview()) return;
-
-    if (this.isPlaying) {
-      this.audio.pause();
-    } else {
-      this.audio.play();
-    }
     this.isPlaying = !this.isPlaying;
+    
+    if (this.isPlaying) {
+      this.startProgress();
+    } else {
+      this.stopProgress();
+    }
   }
 
-  hasPreview(): boolean {
-    return !!this.currentTrack?.preview_url;
+  startProgress(): void {
+    const totalDuration = 30;
+    let currentSeconds = this.parseTime(this.currentTime);
+    
+    this.progressInterval = setInterval(() => {
+      currentSeconds++;
+      
+      if (currentSeconds >= totalDuration) {
+        currentSeconds = 0;
+        this.isPlaying = false;
+        this.stopProgress();
+      }
+      
+      this.progress = (currentSeconds / totalDuration) * 100;
+      
+      const minutes = Math.floor(currentSeconds / 60);
+      const seconds = currentSeconds % 60;
+      this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
   }
 
-  onTimeUpdate(): void {
-    if (!this.audio) return;
-
-    const current = this.audio.currentTime;
-    const total = this.audio.duration;
-
-    this.progress = (current / total) * 100;
-
-    const minutes = Math.floor(current / 60);
-    const seconds = Math.floor(current % 60);
-    this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  stopProgress(): void {
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
+    }
   }
 
-  onMetadataLoaded(): void {
-    if (!this.audio) return;
-
-    const total = this.audio.duration;
-    const minutes = Math.floor(total / 60);
-    const seconds = Math.floor(total % 60);
-    this.duration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  }
-
-  onTrackEnded(): void {
-    this.isPlaying = false;
-    this.progress = 0;
-    this.currentTime = '0:00';
+  parseTime(time: string): number {
+    const [minutes, seconds] = time.split(':').map(Number);
+    return minutes * 60 + seconds;
   }
 
   getAlbumImage(): string {
@@ -206,15 +202,14 @@ export class PlayerComponent implements OnChanges, OnDestroy {
     const percentage = (clickX / rect.width) * 100;
     this.progress = Math.max(0, Math.min(100, percentage));
     
-    if (this.audio) {
-      const newTime = (percentage / 100) * this.audio.duration;
-      this.audio.currentTime = newTime;
-    } else {
-      const totalSeconds = 225;
-      const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
-      const minutes = Math.floor(currentSeconds / 60);
-      const seconds = currentSeconds % 60;
-      this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
+    const totalSeconds = 30;
+    const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  ngOnDestroy(): void {
+    this.stopProgress();
   }
 }
