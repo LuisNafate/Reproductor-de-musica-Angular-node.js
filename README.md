@@ -1,44 +1,40 @@
 # Reproductor Angular - Spotify Integration
 
-Un reproductor de música moderno construido con Angular 18+ y Tailwind CSS, conectado a la API de Spotify.
+Luis Nafate 4-B
+TIID
 
-## 🎨 Características
+Un reproductor de música construido con Angular 18+ y Tailwind CSS, conectado a la API de Spotify.
 
-- ✅ Diseño moderno con degradado azul oscuro
-- ✅ Búsqueda de canciones en tiempo real con Spotify API
-- ✅ Lista de reproducción con scroll suave
-- ✅ Carátula de álbum grande en el centro
-- ✅ Controles de reproducción visuales (no funcionales)
-- ✅ Interfaz responsive con Tailwind CSS
-- ✅ Componentes standalone de Angular 18
+## Características
 
-## 📋 Requisitos previos
+- Diseño moderno con degradado azul oscuro
+- Búsqueda de canciones en tiempo real con Spotify API
+- Lista de reproducción donde se muestran lo resultados de la barra de busqueda
+- Carátula de álbum grande en el centro
+- Controles de reproducción visuales (no funcionales)
+- Interfaz responsive con Tailwind CSS
+- Componentes standalone de Angular 18
+
+## Requisitos previos
 
 - Node.js (v18 o superior)
 - npm o yarn
 - Cuenta de Spotify Developer (para obtener el token de acceso)
 
-## 🚀 Instalación
+## Instalación
 
-1. **Instalar dependencias:**
 
-```bash
-npm install
-```
-
-2. **Configurar token de Spotify:**
+1. **Como funciona el token de Spotify:**
 
    Para usar la API de Spotify, necesitas un token de acceso:
 
-   a. Ve a [Spotify Developer Console](https://developer.spotify.com/console/get-search-item/)
+   a. Ve a [Spotify Developer Console](https://developer.spotify.com)
    
-   b. Haz clic en "Get Token" y autoriza la aplicación
+   b. Ir a dashboard y crear un nuevo proyecto
    
-   c. Copia el token generado
+   c. Copia el token generado de client y secret client
    
-   d. Abre el archivo `src/app/services/spotify.service.ts`
-   
-   e. Reemplaza `'TU_TOKEN_DE_SPOTIFY_AQUI'` con tu token:
+   d. Reemplaza `'TU_TOKEN_DE_SPOTIFY_AQUI'` con tu token:
 
    ```typescript
    private readonly accessToken = 'TU_TOKEN_AQUI';
