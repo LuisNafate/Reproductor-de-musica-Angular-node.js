@@ -128,6 +128,7 @@ export class PlayerComponent {
   
   private progressInterval: any;
 
+  // Alternar entre play y pause
   togglePlay(): void {
     this.isPlaying = !this.isPlaying;
     
@@ -138,6 +139,7 @@ export class PlayerComponent {
     }
   }
 
+  // Iniciar simulacion de progreso
   startProgress(): void {
     const totalDuration = 30;
     let currentSeconds = this.parseTime(this.currentTime);
@@ -159,6 +161,7 @@ export class PlayerComponent {
     }, 1000);
   }
 
+  // Detener simulacion de progreso
   stopProgress(): void {
     if (this.progressInterval) {
       clearInterval(this.progressInterval);
@@ -166,11 +169,13 @@ export class PlayerComponent {
     }
   }
 
+  // Convertir formato de tiempo a segundos
   parseTime(time: string): number {
     const [minutes, seconds] = time.split(':').map(Number);
     return minutes * 60 + seconds;
   }
 
+  // Obtener imagen del album o placeholder
   getAlbumImage(): string {
     if (!this.currentTrack || !this.currentTrack.album.images || this.currentTrack.album.images.length === 0) {
       return 'https://via.placeholder.com/400x400/1e3d59/ffffff?text=No+Track';
@@ -178,6 +183,7 @@ export class PlayerComponent {
     return this.currentTrack.album.images[0].url;
   }
 
+  // Obtener nombres de artistas
   getArtists(): string {
     if (!this.currentTrack) {
       return 'Enjambre';
@@ -185,6 +191,7 @@ export class PlayerComponent {
     return this.currentTrack.artists.map(artist => artist.name).join(', ');
   }
 
+  // Saltar a una posicion en la barra de progreso
   seekTo(event: MouseEvent): void {
     const element = event.currentTarget as HTMLElement;
     const rect = element.getBoundingClientRect();
@@ -199,6 +206,7 @@ export class PlayerComponent {
     this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
+  // Limpiar intervalo al destruir componente
   ngOnDestroy(): void {
     this.stopProgress();
   }
