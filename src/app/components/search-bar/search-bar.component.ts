@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
           placeholder="Buscar canciones o artistas..."
           class="w-full px-4 py-3 pl-12 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
         />
+        <!-- Icono de busqueda -->
         <svg
           class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60"
           fill="none"
@@ -37,6 +38,7 @@ export class SearchBarComponent {
   @Output() search = new EventEmitter<string>();
   searchQuery = '';
 
+  // Emitir evento de busqueda al presionar Enter
   onSearch(): void {
     if (this.searchQuery.trim()) {
       this.search.emit(this.searchQuery);
