@@ -8,7 +8,7 @@ import { SpotifyTrack } from '../../services/spotify.service';
   imports: [CommonModule],
   template: `
     <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-6 h-[calc(100vh-200px)] overflow-y-auto shadow-2xl">
-      <h2 class="text-xl font-semibold mb-4 text-white/90">Fila de reproducción</h2>
+      <h2 class="text-xl font-semibold mb-4 text-white/90">Fila de reproduccion</h2>
       
       <div *ngIf="tracks.length === 0" class="text-center text-white/40 mt-20">
         <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,6 @@ export class TrackListComponent {
     if (!track.album.images || track.album.images.length === 0) {
       return 'https://via.placeholder.com/48x48/1e3d59/ffffff?text=No+Image';
     }
-    // Intentar obtener la imagen pequeña (índice 2) o la grande (índice 0)
     return track.album.images[2]?.url || track.album.images[0]?.url || 'https://via.placeholder.com/48x48/1e3d59/ffffff?text=No+Image';
   }
 

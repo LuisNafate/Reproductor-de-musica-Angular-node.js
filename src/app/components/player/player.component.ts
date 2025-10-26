@@ -8,7 +8,6 @@ import { SpotifyTrack } from '../../services/spotify.service';
   imports: [CommonModule],
   template: `
     <div class="flex flex-col items-center">
-      <!-- Carátula del álbum -->
       <div class="mb-8">
         <div class="relative">
           <img 
@@ -20,27 +19,21 @@ import { SpotifyTrack } from '../../services/spotify.service';
         </div>
       </div>
 
-      <!-- Información de la canción -->
       <div class="text-center mb-6">
         <h1 class="text-3xl font-bold mb-2">{{ currentTrack?.name || 'La diferencia' }}</h1>
         <p class="text-xl text-white/70">{{ getArtists() }}</p>
       </div>
 
-      <!-- Barra de reproducción -->
       <div class="w-full max-w-2xl mb-6 px-4">
         <div class="flex items-center gap-4">
-          <!-- Tiempo actual -->
           <span class="text-sm text-white/60 font-medium min-w-[40px]">{{ currentTime }}</span>
           
-          <!-- Barra de progreso -->
           <div class="flex-1 group cursor-pointer" (click)="seekTo($event)">
             <div class="relative h-2 bg-white/20 rounded-full overflow-hidden hover:h-3 transition-all">
-              <!-- Progreso -->
               <div 
                 class="absolute h-full bg-gradient-to-r from-white to-white/90 rounded-full transition-all"
                 [style.width.%]="progress">
               </div>
-              <!-- Punto de progreso -->
               <div 
                 class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                 [style.left.%]="progress"
@@ -49,12 +42,10 @@ import { SpotifyTrack } from '../../services/spotify.service';
             </div>
           </div>
           
-          <!-- Duración total -->
           <span class="text-sm text-white/60 font-medium min-w-[40px]">{{ duration }}</span>
         </div>
       </div>
 
-      <!-- Controles de reproducción -->
       <div class="flex items-center gap-6 mb-4">
         <button class="text-white/70 hover:text-white transition-colors">
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -87,7 +78,6 @@ import { SpotifyTrack } from '../../services/spotify.service';
         </button>
       </div>
 
-      <!-- Control de volumen -->
       <div class="flex items-center gap-3 mt-4">
         <svg class="w-5 h-5 text-white/70" fill="currentColor" viewBox="0 0 24 24">
           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
@@ -103,10 +93,9 @@ import { SpotifyTrack } from '../../services/spotify.service';
 export class PlayerComponent {
   @Input() currentTrack: SpotifyTrack | null = null;
   
-  // Propiedades para la barra de reproducción
   currentTime: string = '0:00';
   duration: string = '3:45';
-  progress: number = 35; // Porcentaje de progreso (0-100)
+  progress: number = 35;
 
   getAlbumImage(): string {
     if (!this.currentTrack || !this.currentTrack.album.images || this.currentTrack.album.images.length === 0) {
@@ -122,7 +111,6 @@ export class PlayerComponent {
     return this.currentTrack.artists.map(artist => artist.name).join(', ');
   }
 
-  // Método para buscar en la barra de reproducción
   seekTo(event: MouseEvent): void {
     const element = event.currentTarget as HTMLElement;
     const rect = element.getBoundingClientRect();
@@ -130,8 +118,7 @@ export class PlayerComponent {
     const percentage = (clickX / rect.width) * 100;
     this.progress = Math.max(0, Math.min(100, percentage));
     
-    // Calcular tiempo basado en el porcentaje
-    const totalSeconds = 225; // 3:45 en segundos
+    const totalSeconds = 225;
     const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
     const minutes = Math.floor(currentSeconds / 60);
     const seconds = currentSeconds % 60;

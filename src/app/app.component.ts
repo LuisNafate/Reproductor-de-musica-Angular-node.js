@@ -16,12 +16,9 @@ import { SpotifyService, SpotifyTrack } from './services/spotify.service';
   ],
   template: `
     <div class="min-h-screen p-8">
-      <!-- Barra de búsqueda superior -->
       <app-search-bar (search)="onSearch($event)"></app-search-bar>
 
-      <!-- Contenedor principal con diseño en grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        <!-- Panel izquierdo: Lista de canciones -->
         <div class="lg:col-span-1">
           <app-track-list 
             [tracks]="tracks" 
@@ -29,13 +26,11 @@ import { SpotifyService, SpotifyTrack } from './services/spotify.service';
           </app-track-list>
         </div>
 
-        <!-- Panel central: Reproductor principal -->
         <div class="lg:col-span-2 flex items-center justify-center">
           <app-player [currentTrack]="selectedTrack"></app-player>
         </div>
       </div>
 
-      <!-- Mensaje de error si hay problemas con la API -->
       <div *ngIf="errorMessage" class="fixed bottom-4 right-4 bg-red-500/90 text-white px-6 py-3 rounded-lg shadow-lg">
         {{ errorMessage }}
       </div>

@@ -33,12 +33,8 @@ export class SpotifyService {
   private readonly apiUrl = 'https://api.spotify.com/v1';
   private readonly tokenUrl = 'https://accounts.spotify.com/api/token';
   
-  // CONFIGURA TUS CREDENCIALES AQUÍ:
-  // 1. Ve a: https://developer.spotify.com/dashboard
-  // 2. Crea una app (si no tienes una)
-  // 3. Ve a Settings y copia el Client ID y Client Secret
-  private readonly clientId = '3fa5ab45fb6b48fa9e717375780ebdf5'; // Reemplaza con tu Client ID
-  private readonly clientSecret = '1f136f6871d14e8ba8f9715b22344ec6'; // Reemplaza con tu Client Secret
+  private readonly clientId = '3fa5ab45fb6b48fa9e717375780ebdf5';
+  private readonly clientSecret = '1f136f6871d14e8ba8f9715b22344ec6';
   
   private accessToken: string | null = null;
   private tokenExpiry: number = 0;
@@ -46,12 +42,10 @@ export class SpotifyService {
   constructor(private http: HttpClient) { }
 
   private getAccessToken(): Observable<string> {
-    // Si ya tenemos un token válido, lo retornamos
     if (this.accessToken && Date.now() < this.tokenExpiry) {
       return of(this.accessToken);
     }
 
-    // Si no, obtenemos uno nuevo
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`)
@@ -62,7 +56,6 @@ export class SpotifyService {
     return this.http.post<SpotifyTokenResponse>(this.tokenUrl, body, { headers }).pipe(
       map(response => {
         this.accessToken = response.access_token;
-        // Guardamos el tiempo de expiración (menos 5 minutos de margen)
         this.tokenExpiry = Date.now() + ((response.expires_in - 300) * 1000);
         return this.accessToken;
       }),
