@@ -21,9 +21,37 @@ import { SpotifyTrack } from '../../services/spotify.service';
       </div>
 
       <!-- Información de la canción -->
-      <div class="text-center mb-8">
+      <div class="text-center mb-6">
         <h1 class="text-3xl font-bold mb-2">{{ currentTrack?.name || 'La diferencia' }}</h1>
         <p class="text-xl text-white/70">{{ getArtists() }}</p>
+      </div>
+
+      <!-- Barra de reproducción -->
+      <div class="w-full max-w-2xl mb-6 px-4">
+        <div class="flex items-center gap-4">
+          <!-- Tiempo actual -->
+          <span class="text-sm text-white/60 font-medium min-w-[40px]">{{ currentTime }}</span>
+          
+          <!-- Barra de progreso -->
+          <div class="flex-1 group cursor-pointer" (click)="seekTo($event)">
+            <div class="relative h-2 bg-white/20 rounded-full overflow-hidden hover:h-3 transition-all">
+              <!-- Progreso -->
+              <div 
+                class="absolute h-full bg-gradient-to-r from-white to-white/90 rounded-full transition-all"
+                [style.width.%]="progress">
+              </div>
+              <!-- Punto de progreso -->
+              <div 
+                class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                [style.left.%]="progress"
+                [style.transform]="'translate(-50%, -50%)'">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Duración total -->
+          <span class="text-sm text-white/60 font-medium min-w-[40px]">{{ duration }}</span>
+        </div>
       </div>
 
       <!-- Controles de reproducción -->
@@ -74,6 +102,11 @@ import { SpotifyTrack } from '../../services/spotify.service';
 })
 export class PlayerComponent {
   @Input() currentTrack: SpotifyTrack | null = null;
+  
+  // Propiedades para la barra de reproducción
+  currentTime: string = '0:00';
+  duration: string = '3:45';
+  progress: number = 35; // Porcentaje de progreso (0-100)
 
   getAlbumImage(): string {
     if (!this.currentTrack || !this.currentTrack.album.images || this.currentTrack.album.images.length === 0) {
@@ -87,5 +120,21 @@ export class PlayerComponent {
       return 'Enjambre';
     }
     return this.currentTrack.artists.map(artist => artist.name).join(', ');
+  }
+
+  // Método para buscar en la barra de reproducción
+  seekTo(event: MouseEvent): void {
+    const element = event.currentTarget as HTMLElement;
+    const rect = element.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const percentage = (clickX / rect.width) * 100;
+    this.progress = Math.max(0, Math.min(100, percentage));
+    
+    // Calcular tiempo basado en el porcentaje
+    const totalSeconds = 225; // 3:45 en segundos
+    const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 }
