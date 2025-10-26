@@ -14,7 +14,6 @@ import { SpotifyTrack } from '../../services/spotify.service';
             [src]="getAlbumImage()" 
             [alt]="currentTrack?.name || 'No track selected'"
             class="w-80 h-80 rounded-2xl shadow-2xl border-4 border-white/10 transition-all duration-300"
-            [class.animate-spin-slow]="isPlaying"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-dark-blue/50 to-transparent rounded-2xl"></div>
           
@@ -114,17 +113,8 @@ import { SpotifyTrack } from '../../services/spotify.service';
       50% { height: 100%; }
     }
 
-    @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
     .animate-equalizer {
       animation: equalizer 0.8s ease-in-out infinite;
-    }
-
-    .animate-spin-slow {
-      animation: spin-slow 8s linear infinite;
     }
   `]
 })
