@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpotifyTrack } from '../../services/spotify.service';
 
@@ -59,9 +59,15 @@ import { SpotifyTrack } from '../../services/spotify.service';
           </svg>
         </button>
 
-        <button class="bg-white text-dark-blue rounded-full p-4 hover:scale-110 transition-transform shadow-lg">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+        <button 
+          (click)="togglePlay()"
+          class="bg-white text-dark-blue rounded-full p-4 hover:scale-110 transition-transform shadow-lg"
+          [disabled]="!hasPreview()">
+          <svg *ngIf="!isPlaying" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg *ngIf="isPlaying" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
           </svg>
         </button>
 
@@ -86,16 +92,98 @@ import { SpotifyTrack } from '../../services/spotify.service';
           <div class="h-full bg-white w-3/4"></div>
         </div>
       </div>
+
+      <audio #audioPlayer (timeupdate)="onTimeUpdate()" (ended)="onTrackEnded()" (loadedmetadata)="onMetadataLoaded()"></audio>
     </div>
   `,
   styles: []
 })
-export class PlayerComponent {
+export class PlayerComponent implements OnChanges, OnDestroy {
   @Input() currentTrack: SpotifyTrack | null = null;
   
   currentTime: string = '0:00';
-  duration: string = '3:45';
-  progress: number = 35;
+  duration: string = '0:30';
+  progress: number = 0;
+  isPlaying: boolean = false;
+  
+  private audio: HTMLAudioElement | null = null;
+  private updateInterval: any;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['currentTrack'] && this.currentTrack) {
+      this.loadTrack();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.audio) {
+      this.audio.pause();
+      this.audio = null;
+    }
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+  }
+
+  loadTrack(): void {
+    if (this.audio) {
+      this.audio.pause();
+    }
+
+    this.isPlaying = false;
+    this.progress = 0;
+    this.currentTime = '0:00';
+
+    if (this.currentTrack?.preview_url) {
+      this.audio = new Audio(this.currentTrack.preview_url);
+      this.audio.addEventListener('loadedmetadata', () => this.onMetadataLoaded());
+      this.audio.addEventListener('timeupdate', () => this.onTimeUpdate());
+      this.audio.addEventListener('ended', () => this.onTrackEnded());
+    }
+  }
+
+  togglePlay(): void {
+    if (!this.audio || !this.hasPreview()) return;
+
+    if (this.isPlaying) {
+      this.audio.pause();
+    } else {
+      this.audio.play();
+    }
+    this.isPlaying = !this.isPlaying;
+  }
+
+  hasPreview(): boolean {
+    return !!this.currentTrack?.preview_url;
+  }
+
+  onTimeUpdate(): void {
+    if (!this.audio) return;
+
+    const current = this.audio.currentTime;
+    const total = this.audio.duration;
+
+    this.progress = (current / total) * 100;
+
+    const minutes = Math.floor(current / 60);
+    const seconds = Math.floor(current % 60);
+    this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  onMetadataLoaded(): void {
+    if (!this.audio) return;
+
+    const total = this.audio.duration;
+    const minutes = Math.floor(total / 60);
+    const seconds = Math.floor(total % 60);
+    this.duration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  onTrackEnded(): void {
+    this.isPlaying = false;
+    this.progress = 0;
+    this.currentTime = '0:00';
+  }
 
   getAlbumImage(): string {
     if (!this.currentTrack || !this.currentTrack.album.images || this.currentTrack.album.images.length === 0) {
@@ -118,10 +206,15 @@ export class PlayerComponent {
     const percentage = (clickX / rect.width) * 100;
     this.progress = Math.max(0, Math.min(100, percentage));
     
-    const totalSeconds = 225;
-    const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
-    const minutes = Math.floor(currentSeconds / 60);
-    const seconds = currentSeconds % 60;
-    this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    if (this.audio) {
+      const newTime = (percentage / 100) * this.audio.duration;
+      this.audio.currentTime = newTime;
+    } else {
+      const totalSeconds = 225;
+      const currentSeconds = Math.floor((totalSeconds * this.progress) / 100);
+      const minutes = Math.floor(currentSeconds / 60);
+      const seconds = currentSeconds % 60;
+      this.currentTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
   }
 }
