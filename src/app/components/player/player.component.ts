@@ -103,7 +103,7 @@ import { SpotifyTrack } from '../../services/spotify.service';
 
       <!-- Nota de Demo -->
       <div class="mt-6 text-center text-white/40 text-sm">
-        <p>🎵 Modo Demo - Interfaz Visual</p>
+        <p>Ejemplo de reproduccion (no funcional)</p>
       </div>
     </div>
   `,
