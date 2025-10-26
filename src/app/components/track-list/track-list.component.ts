@@ -8,7 +8,12 @@ import { SpotifyTrack } from '../../services/spotify.service';
   imports: [CommonModule],
   template: `
     <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-6 h-[calc(100vh-200px)] overflow-y-auto shadow-2xl">
-      <h2 class="text-xl font-semibold mb-4 text-white/90">Fila de reproduccion</h2>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-white/90">Resultados de busqueda</h2>
+        <span *ngIf="tracks.length > 0" class="text-sm text-white/60 bg-white/10 px-3 py-1 rounded-full">
+          {{ tracks.length }} {{ tracks.length === 1 ? 'resultado' : 'resultados' }}
+        </span>
+      </div>
       
       <div *ngIf="tracks.length === 0" class="text-center text-white/40 mt-20">
         <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
