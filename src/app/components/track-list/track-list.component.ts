@@ -6,56 +6,8 @@ import { SpotifyTrack } from '../../services/spotify.service';
   selector: 'app-track-list',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-6 h-[calc(100vh-200px)] overflow-y-auto shadow-2xl">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-white/90">Resultados de busqueda</h2>
-        <span *ngIf="tracks.length > 0" class="text-sm text-white/60 bg-white/10 px-3 py-1 rounded-full">
-          {{ tracks.length }} {{ tracks.length === 1 ? 'resultado' : 'resultados' }}
-        </span>
-      </div>
-      
-      <div *ngIf="tracks.length === 0" class="text-center text-white/40 mt-20">
-        <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-        </svg>
-        <p>Busca canciones para comenzar</p>
-      </div>
-
-      <div *ngFor="let track of tracks" 
-           (click)="onTrackSelect(track)"
-           class="flex items-center p-3 mb-2 rounded-xl hover:bg-white/10 cursor-pointer transition-all duration-200 group">
-        <img 
-          [src]="getTrackImage(track)" 
-          [alt]="track.name"
-          class="w-12 h-12 rounded-lg mr-4 shadow-md"
-        />
-        <div class="flex-1 overflow-hidden">
-          <p class="text-white font-medium truncate group-hover:text-white/90">{{ track.name }}</p>
-          <p class="text-white/60 text-sm truncate">{{ getArtists(track) }}</p>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-  `]
+  templateUrl: './track-list.component.html',
+  styleUrl: './track-list.component.css'
 })
 export class TrackListComponent {
   @Input() tracks: SpotifyTrack[] = [];
