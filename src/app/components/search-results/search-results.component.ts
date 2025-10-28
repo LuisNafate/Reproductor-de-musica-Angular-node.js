@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '../../services/spotify.service';
 
 @Component({
@@ -10,28 +9,16 @@ import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '../../services/spotif
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.css'
 })
-export class SearchResultsComponent implements OnInit {
-  tracks: SpotifyTrack[] = [];
-  artists: SpotifyArtist[] = [];
-  albums: SpotifyAlbum[] = [];
-  searchQuery: string = '';
+export class SearchResultsComponent {
+  @Input() tracks: SpotifyTrack[] = [];
+  @Input() artists: SpotifyArtist[] = [];
+  @Input() albums: SpotifyAlbum[] = [];
+  @Input() searchQuery: string = '';
+  
+  @Output() backToMain = new EventEmitter<void>();
+  @Output() trackSelected = new EventEmitter<SpotifyTrack>();
 
   activeTab: 'tracks' | 'artists' | 'albums' = 'tracks';
-  
-  constructor(private router: Router) {}
-
-  // Inicializar componente con datos del navigation state
-  ngOnInit(): void {
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state || history.state;
-    
-    if (state) {
-      this.tracks = state['tracks'] || [];
-      this.artists = state['artists'] || [];
-      this.albums = state['albums'] || [];
-      this.searchQuery = state['query'] || '';
-    }
-  }
   
   // Lista de reproduccion fija (simulada)
   playQueue: any[] = [
@@ -69,14 +56,12 @@ export class SearchResultsComponent implements OnInit {
 
   // Regresar a vista principal
   goBack(): void {
-    this.router.navigate(['/']);
+    this.backToMain.emit();
   }
 
-  // Seleccionar cancion y volver a main
+  // Seleccionar cancion
   selectTrack(track: SpotifyTrack): void {
-    this.router.navigate(['/'], {
-      state: { selectedTrack: track, tracks: this.tracks }
-    });
+    this.trackSelected.emit(track);
   }
 
   // Obtener imagen de cancion
