@@ -19,6 +19,9 @@ export class SearchResultsComponent {
   @Output() trackSelected = new EventEmitter<SpotifyTrack>();
 
   activeTab: 'tracks' | 'artists' | 'albums' = 'tracks';
+  
+  // Lista de reproduccion simulada
+  playQueue: SpotifyTrack[] = [];
 
   // Cambiar pestana activa
   setActiveTab(tab: 'tracks' | 'artists' | 'albums'): void {
@@ -33,6 +36,30 @@ export class SearchResultsComponent {
   // Seleccionar cancion
   selectTrack(track: SpotifyTrack): void {
     this.trackSelected.emit(track);
+  }
+
+  // Agregar cancion a la fila
+  addToQueue(track: SpotifyTrack, event: Event): void {
+    event.stopPropagation();
+    if (!this.playQueue.find(t => t.id === track.id)) {
+      this.playQueue.push(track);
+    }
+  }
+
+  // Remover cancion de la fila
+  removeFromQueue(track: SpotifyTrack, event: Event): void {
+    event.stopPropagation();
+    this.playQueue = this.playQueue.filter(t => t.id !== track.id);
+  }
+
+  // Verificar si esta en la fila
+  isInQueue(track: SpotifyTrack): boolean {
+    return this.playQueue.some(t => t.id === track.id);
+  }
+
+  // Limpiar fila
+  clearQueue(): void {
+    this.playQueue = [];
   }
 
   // Obtener imagen de cancion

@@ -48,65 +48,133 @@
   </div>
 
   <!-- Contenido de pestanas -->
-  <div class="max-w-7xl mx-auto">
-    <!-- Canciones -->
-    <div *ngIf="activeTab === 'tracks'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
-      <div *ngIf="tracks.length === 0" class="text-center text-white/40 py-20">
-        <p>No se encontraron canciones</p>
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Columna principal de resultados -->
+    <div class="lg:col-span-2">
+      <!-- Canciones -->
+      <div *ngIf="activeTab === 'tracks'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+        <div *ngIf="tracks.length === 0" class="text-center text-white/40 py-20">
+          <p>No se encontraron canciones</p>
+        </div>
+
+        <div *ngFor="let track of tracks" 
+             class="flex items-center p-3 mb-2 rounded-xl hover:bg-white/10 transition-all duration-200 group">
+          <img 
+            [src]="getTrackImage(track)" 
+            [alt]="track.name"
+            class="w-16 h-16 rounded-lg mr-4 shadow-md cursor-pointer"
+            (click)="selectTrack(track)"
+          />
+          <div class="flex-1 overflow-hidden cursor-pointer" (click)="selectTrack(track)">
+            <p class="text-white font-medium truncate group-hover:text-white/90">{{ track.name }}</p>
+            <p class="text-white/60 text-sm truncate">{{ getTrackArtists(track) }}</p>
+          </div>
+          <button 
+            (click)="addToQueue(track, $event)"
+            *ngIf="!isInQueue(track)"
+            class="opacity-0 group-hover:opacity-100 text-white/70 hover:text-white transition-all p-2 hover:bg-white/10 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+          </button>
+          <button 
+            (click)="removeFromQueue(track, $event)"
+            *ngIf="isInQueue(track)"
+            class="text-green-400 hover:text-green-300 transition-all p-2 hover:bg-white/10 rounded-lg">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div *ngFor="let track of tracks" 
-           (click)="selectTrack(track)"
-           class="flex items-center p-3 mb-2 rounded-xl hover:bg-white/10 cursor-pointer transition-all duration-200 group">
-        <img 
-          [src]="getTrackImage(track)" 
-          [alt]="track.name"
-          class="w-16 h-16 rounded-lg mr-4 shadow-md"
-        />
-        <div class="flex-1 overflow-hidden">
-          <p class="text-white font-medium truncate group-hover:text-white/90">{{ track.name }}</p>
-          <p class="text-white/60 text-sm truncate">{{ getTrackArtists(track) }}</p>
+      <!-- Artistas -->
+      <div *ngIf="activeTab === 'artists'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+        <div *ngIf="artists.length === 0" class="text-center text-white/40 py-20">
+          <p>No se encontraron artistas</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div *ngFor="let artist of artists" 
+               class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
+            <img 
+              [src]="getArtistImage(artist)" 
+              [alt]="artist.name"
+              class="w-full aspect-square rounded-full object-cover mb-4 shadow-lg"
+            />
+            <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ artist.name }}</h3>
+            <p class="text-white/60 text-sm">{{ formatFollowers(artist.followers.total) }} seguidores</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Albumes -->
+      <div *ngIf="activeTab === 'albums'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+        <div *ngIf="albums.length === 0" class="text-center text-white/40 py-20">
+          <p>No se encontraron albumes</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div *ngFor="let album of albums" 
+               class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
+            <img 
+              [src]="getAlbumImage(album)" 
+              [alt]="album.name"
+              class="w-full aspect-square rounded-xl object-cover mb-4 shadow-lg"
+            />
+            <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ album.name }}</h3>
+            <p class="text-white/60 text-sm truncate">{{ getAlbumArtists(album) }}</p>
+            <p class="text-white/40 text-xs mt-1">{{ album.release_date.substring(0, 4) }} • {{ album.total_tracks }} canciones</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Artistas -->
-    <div *ngIf="activeTab === 'artists'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
-      <div *ngIf="artists.length === 0" class="text-center text-white/40 py-20">
-        <p>No se encontraron artistas</p>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        <div *ngFor="let artist of artists" 
-             class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
-          <img 
-            [src]="getArtistImage(artist)" 
-            [alt]="artist.name"
-            class="w-full aspect-square rounded-full object-cover mb-4 shadow-lg"
-          />
-          <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ artist.name }}</h3>
-          <p class="text-white/60 text-sm">{{ formatFollowers(artist.followers.total) }} seguidores</p>
+    <!-- Columna de fila de reproduccion -->
+    <div class="lg:col-span-1">
+      <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-6 sticky top-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-white/90">Fila de reproduccion</h2>
+          <button 
+            *ngIf="playQueue.length > 0"
+            (click)="clearQueue()"
+            class="text-white/60 hover:text-white text-sm transition-colors">
+            Limpiar
+          </button>
         </div>
-      </div>
-    </div>
 
-    <!-- Albumes -->
-    <div *ngIf="activeTab === 'albums'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
-      <div *ngIf="albums.length === 0" class="text-center text-white/40 py-20">
-        <p>No se encontraron albumes</p>
-      </div>
+        <div *ngIf="playQueue.length === 0" class="text-center text-white/40 py-10">
+          <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+          </svg>
+          <p class="text-sm">Agrega canciones a tu fila</p>
+        </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        <div *ngFor="let album of albums" 
-             class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
-          <img 
-            [src]="getAlbumImage(album)" 
-            [alt]="album.name"
-            class="w-full aspect-square rounded-xl object-cover mb-4 shadow-lg"
-          />
-          <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ album.name }}</h3>
-          <p class="text-white/60 text-sm truncate">{{ getAlbumArtists(album) }}</p>
-          <p class="text-white/40 text-xs mt-1">{{ album.release_date.substring(0, 4) }} • {{ album.total_tracks }} canciones</p>
+        <div class="max-h-[calc(100vh-300px)] overflow-y-auto custom-scrollbar">
+          <div *ngFor="let track of playQueue; let i = index" 
+               class="flex items-center p-2 mb-2 rounded-lg hover:bg-white/10 transition-all group">
+            <span class="text-white/40 text-sm w-6 mr-2">{{ i + 1 }}</span>
+            <img 
+              [src]="getTrackImage(track)" 
+              [alt]="track.name"
+              class="w-12 h-12 rounded-lg mr-3 shadow-md"
+            />
+            <div class="flex-1 overflow-hidden">
+              <p class="text-white text-sm font-medium truncate">{{ track.name }}</p>
+              <p class="text-white/60 text-xs truncate">{{ getTrackArtists(track) }}</p>
+            </div>
+            <button 
+              (click)="removeFromQueue(track, $event)"
+              class="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all p-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="playQueue.length > 0" class="mt-4 pt-4 border-t border-white/10">
+          <p class="text-white/60 text-sm">{{ playQueue.length }} {{ playQueue.length === 1 ? 'cancion' : 'canciones' }} en la fila</p>
         </div>
       </div>
     </div>
