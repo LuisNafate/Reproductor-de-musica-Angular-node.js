@@ -23,29 +23,29 @@ export class SearchResultsComponent {
   // Lista de reproduccion fija (simulada)
   playQueue: any[] = [
     {
-      name: 'Blinding Lights',
-      artist: 'The Weeknd',
-      image: 'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874'
+      name: 'ANTIFRAGILE',
+      artist: 'LE SSERAFIM',
+      image: 'https://i.scdn.co/image/ab67616d0000b2737e98e6e8e0c88218fc0bd58e'
     },
     {
-      name: 'Shape of You',
-      artist: 'Ed Sheeran',
-      image: 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96'
+      name: 'Impacto',
+      artist: 'Enjambre',
+      image: 'https://i.scdn.co/image/ab67616d0000b2739e1cfc756886ac782e363584'
     },
     {
-      name: 'Levitating',
-      artist: 'Dua Lipa',
-      image: 'https://i.scdn.co/image/ab67616d0000b273be841ba4bc24340152e3a79a'
+      name: 'UNFORGIVEN',
+      artist: 'LE SSERAFIM (feat. Nile Rodgers)',
+      image: 'https://i.scdn.co/image/ab67616d0000b273dae490a4f1338a4e77b61971'
     },
     {
-      name: 'Starboy',
-      artist: 'The Weeknd ft. Daft Punk',
-      image: 'https://i.scdn.co/image/ab67616d0000b2734718e2b124f79258be7bc452'
+      name: 'Vida En El Espejo',
+      artist: 'Enjambre',
+      image: 'https://i.scdn.co/image/ab67616d0000b2739e1cfc756886ac782e363584'
     },
     {
-      name: 'Save Your Tears',
-      artist: 'The Weeknd',
-      image: 'https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36'
+      name: 'FEARLESS',
+      artist: 'LE SSERAFIM',
+      image: 'https://i.scdn.co/image/ab67616d0000b273998b7ef604db4d8aea3e9a45'
     }
   ];
 
