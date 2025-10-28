@@ -20,8 +20,34 @@ export class SearchResultsComponent {
 
   activeTab: 'tracks' | 'artists' | 'albums' = 'tracks';
   
-  // Lista de reproduccion simulada
-  playQueue: SpotifyTrack[] = [];
+  // Lista de reproduccion fija (simulada)
+  playQueue: any[] = [
+    {
+      name: 'Blinding Lights',
+      artist: 'The Weeknd',
+      image: 'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874'
+    },
+    {
+      name: 'Shape of You',
+      artist: 'Ed Sheeran',
+      image: 'https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96'
+    },
+    {
+      name: 'Levitating',
+      artist: 'Dua Lipa',
+      image: 'https://i.scdn.co/image/ab67616d0000b273be841ba4bc24340152e3a79a'
+    },
+    {
+      name: 'Starboy',
+      artist: 'The Weeknd ft. Daft Punk',
+      image: 'https://i.scdn.co/image/ab67616d0000b2734718e2b124f79258be7bc452'
+    },
+    {
+      name: 'Save Your Tears',
+      artist: 'The Weeknd',
+      image: 'https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36'
+    }
+  ];
 
   // Cambiar pestana activa
   setActiveTab(tab: 'tracks' | 'artists' | 'albums'): void {
@@ -36,30 +62,6 @@ export class SearchResultsComponent {
   // Seleccionar cancion
   selectTrack(track: SpotifyTrack): void {
     this.trackSelected.emit(track);
-  }
-
-  // Agregar cancion a la fila
-  addToQueue(track: SpotifyTrack, event: Event): void {
-    event.stopPropagation();
-    if (!this.playQueue.find(t => t.id === track.id)) {
-      this.playQueue.push(track);
-    }
-  }
-
-  // Remover cancion de la fila
-  removeFromQueue(track: SpotifyTrack, event: Event): void {
-    event.stopPropagation();
-    this.playQueue = this.playQueue.filter(t => t.id !== track.id);
-  }
-
-  // Verificar si esta en la fila
-  isInQueue(track: SpotifyTrack): boolean {
-    return this.playQueue.some(t => t.id === track.id);
-  }
-
-  // Limpiar fila
-  clearQueue(): void {
-    this.playQueue = [];
   }
 
   // Obtener imagen de cancion
