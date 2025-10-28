@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '../../services/spotify.service';
 
 @Component({
@@ -9,16 +10,28 @@ import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '../../services/spotif
   templateUrl: './search-results.component.html',
   styleUrl: './search-results.component.css'
 })
-export class SearchResultsComponent {
-  @Input() tracks: SpotifyTrack[] = [];
-  @Input() artists: SpotifyArtist[] = [];
-  @Input() albums: SpotifyAlbum[] = [];
-  @Input() searchQuery: string = '';
-  
-  @Output() backToMain = new EventEmitter<void>();
-  @Output() trackSelected = new EventEmitter<SpotifyTrack>();
+export class SearchResultsComponent implements OnInit {
+  tracks: SpotifyTrack[] = [];
+  artists: SpotifyArtist[] = [];
+  albums: SpotifyAlbum[] = [];
+  searchQuery: string = '';
 
   activeTab: 'tracks' | 'artists' | 'albums' = 'tracks';
+  
+  constructor(private router: Router) {}
+
+  // Inicializar componente con datos del navigation state
+  ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || history.state;
+    
+    if (state) {
+      this.tracks = state['tracks'] || [];
+      this.artists = state['artists'] || [];
+      this.albums = state['albums'] || [];
+      this.searchQuery = state['query'] || '';
+    }
+  }
   
   // Lista de reproduccion fija (simulada)
   playQueue: any[] = [
@@ -56,12 +69,14 @@ export class SearchResultsComponent {
 
   // Regresar a vista principal
   goBack(): void {
-    this.backToMain.emit();
+    this.router.navigate(['/']);
   }
 
-  // Seleccionar cancion
+  // Seleccionar cancion y volver a main
   selectTrack(track: SpotifyTrack): void {
-    this.trackSelected.emit(track);
+    this.router.navigate(['/'], {
+      state: { selectedTrack: track, tracks: this.tracks }
+    });
   }
 
   // Obtener imagen de cancion
