@@ -15,10 +15,42 @@ export interface SpotifyTrack {
   preview_url: string | null;
 }
 
+// Interfaz de artista
+export interface SpotifyArtist {
+  id: string;
+  name: string;
+  images: { url: string }[];
+  followers: { total: number };
+  genres: string[];
+}
+
+// Interfaz de album
+export interface SpotifyAlbum {
+  id: string;
+  name: string;
+  artists: { name: string }[];
+  images: { url: string }[];
+  release_date: string;
+  total_tracks: number;
+}
+
 // Estructura de respuesta de busqueda
 export interface SpotifySearchResponse {
   tracks: {
     items: SpotifyTrack[];
+  };
+}
+
+// Respuesta de busqueda completa
+export interface SpotifyFullSearchResponse {
+  tracks: {
+    items: SpotifyTrack[];
+  };
+  artists: {
+    items: SpotifyArtist[];
+  };
+  albums: {
+    items: SpotifyAlbum[];
   };
 }
 
@@ -90,6 +122,26 @@ export class SpotifyService {
       }),
       catchError(error => {
         console.error('Error buscando canciones:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Buscar todo: canciones, artistas y albums
+  searchAll(query: string): Observable<SpotifyFullSearchResponse> {
+    return this.getAccessToken().pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get<SpotifyFullSearchResponse>(
+          `${this.apiUrl}/search?q=${encodeURIComponent(query)}&type=track,artist,album&limit=20`,
+          { headers }
+        );
+      }),
+      catchError(error => {
+        console.error('Error buscando:', error);
         return throwError(() => error);
       })
     );

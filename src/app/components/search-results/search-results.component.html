@@ -1,0 +1,114 @@
+<div class="min-h-screen p-8">
+  <!-- Header con boton de regreso -->
+  <div class="max-w-7xl mx-auto mb-8">
+    <button 
+      (click)="goBack()"
+      class="flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-4">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span class="font-medium">Volver</span>
+    </button>
+
+    <h1 class="text-3xl font-bold mb-2">Resultados de busqueda</h1>
+    <p class="text-white/60 text-lg">{{ searchQuery }}</p>
+  </div>
+
+  <!-- Pestanas -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <div class="flex gap-4 border-b border-white/10">
+      <button
+        (click)="setActiveTab('tracks')"
+        [class.border-white]="activeTab === 'tracks'"
+        [class.text-white]="activeTab === 'tracks'"
+        [class.border-transparent]="activeTab !== 'tracks'"
+        [class.text-white/60]="activeTab !== 'tracks'"
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        Canciones ({{ tracks.length }})
+      </button>
+      <button
+        (click)="setActiveTab('artists')"
+        [class.border-white]="activeTab === 'artists'"
+        [class.text-white]="activeTab === 'artists'"
+        [class.border-transparent]="activeTab !== 'artists'"
+        [class.text-white/60]="activeTab !== 'artists'"
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        Artistas ({{ artists.length }})
+      </button>
+      <button
+        (click)="setActiveTab('albums')"
+        [class.border-white]="activeTab === 'albums'"
+        [class.text-white]="activeTab === 'albums'"
+        [class.border-transparent]="activeTab !== 'albums'"
+        [class.text-white/60]="activeTab !== 'albums'"
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        Albumes ({{ albums.length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido de pestanas -->
+  <div class="max-w-7xl mx-auto">
+    <!-- Canciones -->
+    <div *ngIf="activeTab === 'tracks'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+      <div *ngIf="tracks.length === 0" class="text-center text-white/40 py-20">
+        <p>No se encontraron canciones</p>
+      </div>
+
+      <div *ngFor="let track of tracks" 
+           (click)="selectTrack(track)"
+           class="flex items-center p-3 mb-2 rounded-xl hover:bg-white/10 cursor-pointer transition-all duration-200 group">
+        <img 
+          [src]="getTrackImage(track)" 
+          [alt]="track.name"
+          class="w-16 h-16 rounded-lg mr-4 shadow-md"
+        />
+        <div class="flex-1 overflow-hidden">
+          <p class="text-white font-medium truncate group-hover:text-white/90">{{ track.name }}</p>
+          <p class="text-white/60 text-sm truncate">{{ getTrackArtists(track) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artistas -->
+    <div *ngIf="activeTab === 'artists'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+      <div *ngIf="artists.length === 0" class="text-center text-white/40 py-20">
+        <p>No se encontraron artistas</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div *ngFor="let artist of artists" 
+             class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
+          <img 
+            [src]="getArtistImage(artist)" 
+            [alt]="artist.name"
+            class="w-full aspect-square rounded-full object-cover mb-4 shadow-lg"
+          />
+          <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ artist.name }}</h3>
+          <p class="text-white/60 text-sm">{{ formatFollowers(artist.followers.total) }} seguidores</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Albumes -->
+    <div *ngIf="activeTab === 'albums'" class="bg-white/5 backdrop-blur-sm rounded-3xl p-6">
+      <div *ngIf="albums.length === 0" class="text-center text-white/40 py-20">
+        <p>No se encontraron albumes</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div *ngFor="let album of albums" 
+             class="bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-all cursor-pointer group">
+          <img 
+            [src]="getAlbumImage(album)" 
+            [alt]="album.name"
+            class="w-full aspect-square rounded-xl object-cover mb-4 shadow-lg"
+          />
+          <h3 class="text-white font-semibold truncate group-hover:text-white/90">{{ album.name }}</h3>
+          <p class="text-white/60 text-sm truncate">{{ getAlbumArtists(album) }}</p>
+          <p class="text-white/40 text-xs mt-1">{{ album.release_date.substring(0, 4) }} • {{ album.total_tracks }} canciones</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { TrackListComponent } from './components/track-list/track-list.component';
 import { PlayerComponent } from './components/player/player.component';
-import { SpotifyService, SpotifyTrack } from './services/spotify.service';
+import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { SpotifyService, SpotifyTrack, SpotifyArtist, SpotifyAlbum } from './services/spotify.service';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +13,24 @@ import { SpotifyService, SpotifyTrack } from './services/spotify.service';
     CommonModule,
     SearchBarComponent,
     TrackListComponent,
-    PlayerComponent
+    PlayerComponent,
+    SearchResultsComponent
   ],
   template: `
-    <div class="min-h-screen p-8">
+    <!-- Vista de resultados de busqueda -->
+    <div *ngIf="showSearchResults">
+      <app-search-results
+        [tracks]="searchTracks"
+        [artists]="searchArtists"
+        [albums]="searchAlbums"
+        [searchQuery]="currentSearchQuery"
+        (backToMain)="goBackToMain()"
+        (trackSelected)="onTrackSelectedFromSearch($event)">
+      </app-search-results>
+    </div>
+
+    <!-- Vista principal -->
+    <div *ngIf="!showSearchResults" class="min-h-screen p-8">
       <app-search-bar (search)="onSearch($event)"></app-search-bar>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -42,29 +57,49 @@ export class AppComponent {
   tracks: SpotifyTrack[] = [];
   selectedTrack: SpotifyTrack | null = null;
   errorMessage: string = '';
+  
+  // Estado de vista de busqueda
+  showSearchResults: boolean = false;
+  searchTracks: SpotifyTrack[] = [];
+  searchArtists: SpotifyArtist[] = [];
+  searchAlbums: SpotifyAlbum[] = [];
+  currentSearchQuery: string = '';
 
   constructor(private spotifyService: SpotifyService) {}
 
-  // Buscar canciones en Spotify
+  // Buscar en Spotify y mostrar resultados
   onSearch(query: string): void {
     this.errorMessage = '';
-    this.spotifyService.searchTracks(query).subscribe({
+    this.currentSearchQuery = query;
+    
+    this.spotifyService.searchAll(query).subscribe({
       next: (response) => {
-        this.tracks = response.tracks.items;
-        // Seleccionar primera cancion si no hay ninguna seleccionada
-        if (this.tracks.length > 0 && !this.selectedTrack) {
-          this.selectedTrack = this.tracks[0];
-        }
+        this.searchTracks = response.tracks.items;
+        this.searchArtists = response.artists.items;
+        this.searchAlbums = response.albums.items;
+        this.showSearchResults = true;
       },
       error: (error) => {
-        console.error('Error al buscar canciones:', error);
+        console.error('Error al buscar:', error);
         this.errorMessage = 'Error al conectar con Spotify. Verifica tu token de acceso.';
         setTimeout(() => this.errorMessage = '', 5000);
       }
     });
   }
 
-  // Cambiar cancion seleccionada
+  // Regresar a vista principal
+  goBackToMain(): void {
+    this.showSearchResults = false;
+  }
+
+  // Seleccionar cancion desde busqueda y volver a vista principal
+  onTrackSelectedFromSearch(track: SpotifyTrack): void {
+    this.selectedTrack = track;
+    this.tracks = this.searchTracks;
+    this.showSearchResults = false;
+  }
+
+  // Cambiar cancion seleccionada en vista principal
   onTrackSelected(track: SpotifyTrack): void {
     this.selectedTrack = track;
   }
