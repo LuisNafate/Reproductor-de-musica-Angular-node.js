@@ -19,29 +19,29 @@
     <div class="flex gap-4 border-b border-white/10">
       <button
         (click)="setActiveTab('tracks')"
-        [class.border-white]="activeTab === 'tracks'"
-        [class.text-white]="activeTab === 'tracks'"
-        [class.border-transparent]="activeTab !== 'tracks'"
-        [class.text-white/60]="activeTab !== 'tracks'"
-        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white"
+        [ngClass]="{
+          'border-white text-white': activeTab === 'tracks',
+          'border-transparent text-white/60': activeTab !== 'tracks'
+        }">
         Canciones ({{ tracks.length }})
       </button>
       <button
         (click)="setActiveTab('artists')"
-        [class.border-white]="activeTab === 'artists'"
-        [class.text-white]="activeTab === 'artists'"
-        [class.border-transparent]="activeTab !== 'artists'"
-        [class.text-white/60]="activeTab !== 'artists'"
-        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white"
+        [ngClass]="{
+          'border-white text-white': activeTab === 'artists',
+          'border-transparent text-white/60': activeTab !== 'artists'
+        }">
         Artistas ({{ artists.length }})
       </button>
       <button
         (click)="setActiveTab('albums')"
-        [class.border-white]="activeTab === 'albums'"
-        [class.text-white]="activeTab === 'albums'"
-        [class.border-transparent]="activeTab !== 'albums'"
-        [class.text-white/60]="activeTab !== 'albums'"
-        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white">
+        class="px-6 py-3 font-semibold border-b-2 transition-colors hover:text-white"
+        [ngClass]="{
+          'border-white text-white': activeTab === 'albums',
+          'border-transparent text-white/60': activeTab !== 'albums'
+        }">
         Albumes ({{ albums.length }})
       </button>
     </div>
