@@ -36,35 +36,6 @@ export class SearchResultsComponent implements OnInit {
       this.searchQuery = state['query'] || '';
     }
   }
-  
-  // Lista de reproduccion fija (simulada)
-  playQueue: any[] = [
-    {
-      name: 'ANTIFRAGILE',
-      artist: 'LE SSERAFIM',
-      image: 'https://i.scdn.co/image/ab67616d00001e023369310bc92d472415369ed6'
-    },
-    {
-      name: 'Impacto',
-      artist: 'Enjambre',
-      image: 'https://i.scdn.co/image/ab67616d00001e0266f128e383614b0aa4df5ebd'
-    },
-    {
-      name: 'UNFORGIVEN',
-      artist: 'LE SSERAFIM',
-      image: 'https://i.scdn.co/image/ab67616d00001e02971bef5fdb2db3fa3e6e3870'
-    },
-    {
-      name: 'Vida En El Espejo',
-      artist: 'Enjambre',
-      image: 'https://i.scdn.co/image/ab67616d00001e0208b5853acded25e1b5ff5115'
-    },
-    {
-      name: 'FEARLESS',
-      artist: 'LE SSERAFIM',
-      image: 'https://i.scdn.co/image/ab67616d00001e02971bef5fdb2db3fa3e6e3870'
-    }
-  ];
 
   // Cambiar pestana activa
   setActiveTab(tab: 'tracks' | 'artists' | 'albums'): void {
