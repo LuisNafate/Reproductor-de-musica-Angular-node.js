@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
 import { PlayerComponent } from '../../components/player/player.component';
 import { SpotifyService, SpotifyTrack } from '../../services/spotify.service';
+import { MusicStateService } from '../../services/music-state.service';
 
 @Component({
   selector: 'app-main-view',
@@ -18,25 +20,38 @@ import { SpotifyService, SpotifyTrack } from '../../services/spotify.service';
   templateUrl: './main-view.component.html',
   styleUrl: './main-view.component.css'
 })
-export class MainViewComponent implements OnInit {
+export class MainViewComponent implements OnInit, OnDestroy {
   tracks: SpotifyTrack[] = [];
   selectedTrack: SpotifyTrack | null = null;
   errorMessage: string = '';
+  
+  private subscriptions = new Subscription();
 
   constructor(
     private spotifyService: SpotifyService,
+    private musicState: MusicStateService,
     private router: Router
   ) {}
 
-  // Inicializar y verificar si viene de search-results
+  // Inicializar y suscribirse al estado
   ngOnInit(): void {
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state || history.state;
+    // Suscribirse a cambios en el estado
+    this.subscriptions.add(
+      this.musicState.selectedTrack$.subscribe(track => {
+        this.selectedTrack = track;
+      })
+    );
     
-    if (state && state['selectedTrack']) {
-      this.selectedTrack = state['selectedTrack'];
-      this.tracks = state['tracks'] || [];
-    }
+    this.subscriptions.add(
+      this.musicState.tracks$.subscribe(tracks => {
+        this.tracks = tracks;
+      })
+    );
+  }
+
+  // Limpiar suscripciones
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   // Buscar en Spotify y navegar a resultados
@@ -45,6 +60,7 @@ export class MainViewComponent implements OnInit {
     
     this.spotifyService.searchAll(query).subscribe({
       next: (response) => {
+        // Navegar con datos en state (para SearchResults)
         this.router.navigate(['/search'], {
           state: {
             tracks: response.tracks.items,
@@ -62,8 +78,8 @@ export class MainViewComponent implements OnInit {
     });
   }
 
-  // Cambiar cancion seleccionada
+  // Cambiar cancion seleccionada y actualizar estado
   onTrackSelected(track: SpotifyTrack): void {
-    this.selectedTrack = track;
+    this.musicState.setSelectedTrack(track);
   }
 }

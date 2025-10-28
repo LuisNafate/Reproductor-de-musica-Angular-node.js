@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SpotifyTrack, SpotifyArtist, SpotifyAlbum } from '../../services/spotify.service';
+import { MusicStateService } from '../../services/music-state.service';
 
 @Component({
   selector: 'app-search-results',
@@ -18,7 +19,10 @@ export class SearchResultsComponent implements OnInit {
 
   activeTab: 'tracks' | 'artists' | 'albums' = 'tracks';
   
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private musicState: MusicStateService
+  ) {}
 
   // Inicializar con datos del navigation state
   ngOnInit(): void {
@@ -72,11 +76,11 @@ export class SearchResultsComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Seleccionar cancion y volver a main
+  // Seleccionar cancion, actualizar estado y volver
   selectTrack(track: SpotifyTrack): void {
-    this.router.navigate(['/'], {
-      state: { selectedTrack: track, tracks: this.tracks }
-    });
+    this.musicState.setSelectedTrack(track);
+    this.musicState.setTracks(this.tracks);
+    this.router.navigate(['/']);
   }
 
   // Obtener imagen de cancion
